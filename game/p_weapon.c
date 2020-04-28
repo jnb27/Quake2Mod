@@ -859,7 +859,7 @@ void Weapon_Blaster_Fire (edict_t *ent)
 void Weapon_Blaster (edict_t *ent)
 {
 	static int	pause_frames[]	= {19, 32, 0};
-	//The line below, if adding numbers between 4 - 8 i can make it fire more 
+	//The line below, if adding numbers between 4 - 8 i can make it fire more beep bop
 	static int	fire_frames[]	= {5, 0};
 
 	Weapon_Generic (ent, 4, 8, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
