@@ -1111,3 +1111,4 @@ struct edict_s
 	monsterinfo_t	monsterinfo;
 };
 
+void	SelectSpawnPoint(edict_t *ent, vec3_t origin, vec3_t angles);
