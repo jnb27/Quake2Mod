@@ -380,6 +380,7 @@ mmove_t berserk_move_death2 = {FRAME_deathc1, FRAME_deathc8, berserk_frames_deat
 
 void berserk_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point)
 {
+	//yeah im trying to spawn in an entity and using these functions as placeholders for info these are all the warnings
 	int		n;
 
 	if (self->health <= self->gib_health)
@@ -454,4 +455,60 @@ void SP_monster_berserk (edict_t *self)
 	gi.linkentity (self);
 
 	walkmonster_start (self);
+}
+//jnb27 oak
+/************************************************
+*
+* Function:	SP_Oak
+*
+* Description: spawns a oak bot
+*
+* Arguements:
+* void
+*
+* Returns:
+* void
+*
+*************************************************/
+
+void SP_Oak(void)
+{
+	edict_t *newOak;
+	vec3_t	spawn_origin, spawn_angles;
+
+	// spawn the bot on a spawn spot this works thank u
+	newOak = G_Spawn();
+	SelectSpawnPoint(newOak, spawn_origin, spawn_angles);
+	VectorCopy(spawn_origin, newOak->s.origin);
+	newOak->s.origin[2] += 2;	// make sure off ground
+
+	newOak->classname = "bot";
+	newOak->takedamage = DAMAGE_AIM;
+	newOak->movetype = MOVETYPE_STEP;
+	newOak->mass = 200;
+	newOak->solid = SOLID_BBOX;
+	newOak->deadflag = DEAD_NO;
+	newOak->clipmask = MASK_PLAYERSOLID;
+	newOak->model = "players/male/tris.md2";
+	newOak->s.modelindex = 255;
+	newOak->s.modelindex2 = 255;		// custom gun model
+	newOak->s.frame = 0;
+	newOak->waterlevel = 0;
+	newOak->watertype = 0;
+	newOak->health = 100;
+	newOak->max_health = 100;
+	newOak->gib_health = -40;
+
+	// think functions
+	newOak->pain = berserk_pain;
+	newOak->die = berserk_die;
+	//yeah
+
+	VectorSet(newOak->mins, -16, -16, -24);
+	VectorSet(newOak->maxs, 16, 16, 32);
+	VectorClear(newOak->velocity);
+
+	gi.linkentity(newOak);
+	gi.bprintf(PRINT_HIGH, "A Oak bot has entered the game\n");
+
 }
