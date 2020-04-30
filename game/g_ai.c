@@ -128,9 +128,12 @@ void ai_stand (edict_t *self, float dist)
 			FindTarget (self);
 		return;
 	}
-
-	if (FindTarget (self))
-		return;
+	//jnb27 Making more things blind
+	
+		//if (FindTarget (self))
+			//	return;
+	
+	
 	
 	if (level.time > self->monsterinfo.pausetime)
 	{
@@ -165,8 +168,12 @@ void ai_walk (edict_t *self, float dist)
 	M_MoveToGoal (self, dist);
 
 	// check for noticing a player
-	if (FindTarget (self))
-		return;
+
+	//jnb27 trying to make all enemies blind this works for enemies that are already walking 
+		//if (FindTarget (self))
+			//	return;
+	
+	
 
 	if ((self->monsterinfo.search) && (level.time > self->monsterinfo.idle_time))
 	{
@@ -217,8 +224,12 @@ void ai_turn (edict_t *self, float dist)
 	if (dist)
 		M_walkmove (self, self->s.angles[YAW], dist);
 
-	if (FindTarget (self))
-		return;
+	//jnb27 trying to make more things blind
+	
+		//if (FindTarget (self))
+			//	return;
+	
+	
 	
 	M_ChangeYaw (self);
 }
@@ -495,6 +506,7 @@ qboolean FindTarget (edict_t *self)
 
 // this is where we would check invisibility
 
+		//jnb27 take note of this maybe can use as a stealth mechanic
 		// is client in an spot too dark to be seen?
 		if (client->light_level <= 5)
 			return false;
