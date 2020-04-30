@@ -20,6 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "g_local.h"
 #include "m_player.h"
 
+//jnb27 testing
+void SP_Oak(void);
 
 char *ClientTeam (edict_t *ent)
 {
@@ -983,8 +985,11 @@ void ClientCommand (edict_t *ent)
 		Cmd_Kill_f (ent);
 	else if (Q_stricmp (cmd, "putaway") == 0)
 		Cmd_PutAway_f (ent);
-	else if (Q_stricmp (cmd, "wave") == 0)
-		Cmd_Wave_f (ent);
+	else if (Q_stricmp(cmd, "wave") == 0)
+		Cmd_Wave_f(ent);
+	//jnb27 testing oak
+	else if (Q_stricmp(cmd, "oak") == 0)
+		SP_Oak(ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
 	else	// anything that doesn't match a command will be a chat
