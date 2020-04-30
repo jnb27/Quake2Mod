@@ -1610,6 +1610,16 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			client->ps.pmove.pm_type = PM_NORMAL;
 
 		client->ps.pmove.gravity = sv_gravity->value;
+		
+		//jnb27 testing gravity adjustments this works and i can alter the player gravity
+		if (client->ps.pmove.gravity > 500)
+		{
+			client->ps.pmove.gravity = 200;
+
+			//I should freeze in place on game load
+			//client->ps.pmove.pm_type = PM_FREEZE;
+		}
+
 		pm.s = client->ps.pmove;
 
 		for (i=0 ; i<3 ; i++)
