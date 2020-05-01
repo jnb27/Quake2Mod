@@ -1190,6 +1190,20 @@ void soldier_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 		self->monsterinfo.currentmove = &soldier_move_death5;
 	else
 		self->monsterinfo.currentmove = &soldier_move_death6;
+
+	//jnb27 testing to see if this is the called function on the death
+	//Attacker is me and i do lose health properly, now we know that this is called for the soldiers
+	//TEST SPAWNING GHOST HERE WHEN POSSIBLE
+	attacker->health -= 10;
+	float chance = 0.6;
+	int upper = 100;
+	int lower = 0;
+	if (rand() % (upper - lower + 1) + lower > 50)
+	{
+		SP_monster_berserk();
+		gi.cprintf(attacker, PRINT_HIGH, "%s", "RNG did not like you");
+	}
+		//SP_monster_berserk();
 }
 
 
