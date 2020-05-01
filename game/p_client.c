@@ -24,6 +24,8 @@ void ClientUserinfoChanged (edict_t *ent, char *userinfo);
 
 void SP_misc_teleporter_dest (edict_t *ent);
 
+edict_t *testGhost;
+
 //
 // Gross, ugly, disgustuing hack section
 //
