@@ -130,8 +130,8 @@ void ai_stand (edict_t *self, float dist)
 	}
 	//jnb27 Making more things blind
 	
-		//if (FindTarget (self))
-			//	return;
+	if (FindTarget (self))
+		return;
 	
 	
 	
@@ -170,8 +170,8 @@ void ai_walk (edict_t *self, float dist)
 	// check for noticing a player
 
 	//jnb27 trying to make all enemies blind this works for enemies that are already walking 
-		//if (FindTarget (self))
-			//	return;
+		if (FindTarget (self))
+			return;
 	
 	
 
@@ -226,8 +226,8 @@ void ai_turn (edict_t *self, float dist)
 
 	//jnb27 trying to make more things blind
 	
-		//if (FindTarget (self))
-			//	return;
+		if (FindTarget (self))
+			return;
 	
 	
 	
@@ -506,7 +506,7 @@ qboolean FindTarget (edict_t *self)
 
 // this is where we would check invisibility
 
-		//jnb27 take note of this maybe can use as a stealth mechanic
+		//jnb27 take note of this maybe can use as a stealth mechanic original number was 5 this basically makes me invis, but they come to the spot where i shot
 		// is client in an spot too dark to be seen?
 		if (client->light_level <= 5)
 			return false;
