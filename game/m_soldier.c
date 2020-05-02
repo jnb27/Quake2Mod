@@ -1198,11 +1198,12 @@ void soldier_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 	float chance = 0.6;
 	int upper = 100;
 	int lower = 0;
-	if (rand() % (upper - lower + 1) + lower > 50)
-	{
-		SP_monster_berserk();
-		gi.cprintf(attacker, PRINT_HIGH, "%s", "RNG did not like you");
-	}
+	//if (rand() % (upper - lower + 1) + lower > 50)
+	//{
+	SP_monster_brain();
+	//attacker->client->ps.pmove.gravity = 350;
+	gi.cprintf(attacker, PRINT_HIGH, "%s", "RNG did not like you");
+	//}
 		//SP_monster_berserk();
 }
 
