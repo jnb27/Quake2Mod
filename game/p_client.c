@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 void ClientUserinfoChanged (edict_t *ent, char *userinfo);
 
 void SP_misc_teleporter_dest (edict_t *ent);
-
+int Thonked = 0;
 edict_t *testGhost;
 
 //
@@ -1575,6 +1575,8 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	edict_t	*other;
 	int		i, j;
 	pmove_t	pm;
+	
+	
 
 	level.current_entity = ent;
 	client = ent->client;
@@ -1610,16 +1612,24 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			client->ps.pmove.pm_type = PM_DEAD;
 		else
 			client->ps.pmove.pm_type = PM_NORMAL;
+		
+		
 
-		client->ps.pmove.gravity = sv_gravity->value;
+		
+		if (Thonked < 5)
+		{
+			client->ps.pmove.gravity = sv_gravity->value;
+			Thonked++;
+		}
+		
 		
 		//jnb27 testing gravity adjustments this works and i can alter the player gravity
 		if (client->ps.pmove.gravity > 500)
 		{
-			client->ps.pmove.gravity = 200;
+			//client->ps.pmove.gravity = 200;
 
 			//I should freeze in place on game load
-			//client->ps.pmove.pm_type = PM_FREEZE;
+			
 		}
 
 		pm.s = client->ps.pmove;
@@ -1627,8 +1637,13 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		for (i=0 ; i<3 ; i++)
 		{
 			pm.s.origin[i] = ent->s.origin[i]*8;
+			//Mans said this changes player speed
 			pm.s.velocity[i] = ent->velocity[i]*8;
 		}
+
+		/*pm.s.velocity[0] = 200;//jnb27 speed pls
+		pm.s.velocity[1] = 200;
+		pm.s.velocity[2] = 200;*/
 
 		if (memcmp(&client->old_pmove, &pm.s, sizeof(pm.s)))
 		{
@@ -1649,7 +1664,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		client->old_pmove = pm.s;
 
 		for (i=0 ; i<3 ; i++)
-		{
+		{// orig .125
 			ent->s.origin[i] = pm.s.origin[i]*0.125;
 			ent->velocity[i] = pm.s.velocity[i]*0.125;
 		}
@@ -1752,6 +1767,11 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		other = g_edicts + i;
 		if (other->inuse && other->client->chase_target == ent)
 			UpdateChaseCam(other);
+	}
+	//jnb27 trying to make a no ghosts for certain numbers of kills functionality
+	if (client->GhostBuff == NULL)
+	{
+		client->GhostBuff = 0;
 	}
 }
 
