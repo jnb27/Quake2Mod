@@ -52,6 +52,8 @@ static int	power_shield_index;
 void Use_Quad (edict_t *ent, gitem_t *item);
 static int	quad_drop_timeout_hack;
 
+
+
 //======================================================================
 
 /*
@@ -581,7 +583,9 @@ qboolean Pickup_Health (edict_t *ent, edict_t *other)
 		if (!(ent->spawnflags & DROPPED_ITEM) && (deathmatch->value))
 			SetRespawn (ent, 30);
 	}
-
+	//jnb27 testing to see if i can edit what happens to me when i pickup health
+	gi.cprintf(other, PRINT_HIGH, "%s", "Pickup_Health fired off");
+	other->client->ps.pmove.gravity = 200;
 	return true;
 }
 
@@ -618,6 +622,7 @@ qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 
 	old_armor_index = ArmorIndex (other);
 
+	//jnb27 Below we put in a number for how many kills you get before ghosts spawn again in the armor shard code
 	// handle armor shards specially
 	if (ent->item->tag == ARMOR_SHARD)
 	{
@@ -625,6 +630,9 @@ qboolean Pickup_Armor (edict_t *ent, edict_t *other)
 			other->client->pers.inventory[jacket_armor_index] = 2;
 		else
 			other->client->pers.inventory[old_armor_index] += 2;
+
+		other->client->GhostBuff = 5; //jnb27
+		gi.cprintf(other, PRINT_HIGH, "%s", "No Ghost for 5 kills");
 	}
 
 	// if player has no armor, just use it
