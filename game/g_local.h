@@ -961,6 +961,7 @@ struct gclient_s
 	qboolean	update_chase;		// need to update chase info?
 
 	edict_t *Ghost;
+	int GhostBuff;
 };
 
 
