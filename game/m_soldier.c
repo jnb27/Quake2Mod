@@ -1194,17 +1194,23 @@ void soldier_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 	//jnb27 testing to see if this is the called function on the death
 	//Attacker is me and i do lose health properly, now we know that this is called for the soldiers
 	//TEST SPAWNING GHOST HERE WHEN POSSIBLE
-	attacker->health -= 10;
-	float chance = 0.6;
-	int upper = 100;
-	int lower = 0;
-	//if (rand() % (upper - lower + 1) + lower > 50)
-	//{
-	SP_monster_brain();
-	//attacker->client->ps.pmove.gravity = 350;
-	gi.cprintf(attacker, PRINT_HIGH, "%s", "RNG did not like you");
-	//}
-		//SP_monster_berserk();
+	//int upper = 100;
+	//int lower = 0;
+	if (/*rand() % (upper - lower + 1) + lower > 10 && */attacker->client->GhostBuff <= 4)
+	{
+		//SP_monster_brain();
+		//attacker->client->ps.pmove.gravity = 350;
+		gi.cprintf(attacker, PRINT_HIGH, "%s", "RNG did not like you");
+	}
+	else{
+		if (attacker->client->GhostBuff > 0)
+		{
+			attacker->client->GhostBuff--;
+		}
+		
+		gi.cprintf(attacker, PRINT_HIGH, "%s", "Ghost buff minus one");
+	}
+		SP_monster_berserk();
 }
 
 
