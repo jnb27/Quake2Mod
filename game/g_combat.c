@@ -374,6 +374,11 @@ qboolean CheckTeamDamage (edict_t *targ, edict_t *attacker)
 	return false;
 }
 
+void Reflector( edict_t *datboi, int damagetaken)
+{
+	datboi->health -= damagetaken;
+}
+
 void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir, vec3_t point, vec3_t normal, int damage, int knockback, int dflags, int mod)
 {
 	gclient_t	*client;
@@ -382,6 +387,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	int			asave;
 	int			psave;
 	int			te_sparks;
+
 
 	if (!targ->takedamage)
 		return;
@@ -535,7 +541,10 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		client->damage_blood += take;
 		client->damage_knockback += knockback;
 		VectorCopy (point, client->damage_from);
+		Reflector(attacker, client->damage_armor);
+		Reflector(attacker, client->damage_parmor);
 	}
+	//
 }
 
 
