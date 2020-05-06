@@ -836,7 +836,8 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 		fire_blaster (ent, start, forward, 10, 1000, effect, hyper);
 		//ent->health -= 10;
 		//ent->client->ps.pmove.gravity = 1;
-		//ent->light_level = 0;
+		ent->light_level = 0;
+		ent->client->stealthtime = 1000;
 		//ent->client->stealyo = 1;
 	}
 	
@@ -1243,12 +1244,12 @@ void weapon_shotgun_fire (edict_t *ent)
 
 	ent->health -= 5;
 	damage *= 2;
-	ent->client->DoubleGhost = 1;
+	
 
 	if (deathmatch->value)
-		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
+		fire_shotgun (ent, start, forward, 0, 12, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
 	else
-		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+		fire_shotgun (ent, start, forward, 0, 12, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
