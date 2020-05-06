@@ -962,6 +962,11 @@ struct gclient_s
 
 	edict_t *Ghost;
 	int GhostBuff;
+	int invis;
+	int DoubleGhost;
+	int sinner;
+	int stealyo;
+	int stealthtime;
 };
 
 
