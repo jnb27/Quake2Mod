@@ -833,9 +833,11 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	
 	if (ent->health > 10)
 	{
-		fire_blaster (ent, start, forward, 100000, 1000, effect, hyper);
-		ent->health -= 10;
+		fire_blaster (ent, start, forward, 10, 1000, effect, hyper);
+		//ent->health -= 10;
 		//ent->client->ps.pmove.gravity = 1;
+		//ent->light_level = 0;
+		//ent->client->stealyo = 1;
 	}
 	
 	
@@ -1000,6 +1002,9 @@ void Machinegun_Fire (edict_t *ent)
 		kick *= 4;
 	}
 
+	//ent->health -= 3;
+	
+
 	for (i=1 ; i<3 ; i++)
 	{
 		ent->client->kick_origin[i] = crandom() * 0.35;
@@ -1016,12 +1021,25 @@ void Machinegun_Fire (edict_t *ent)
 			ent->client->machinegun_shots = 9;
 	}
 
-	// get start / end positions
+	// get start / end positions original numbers DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD jnb27
 	VectorAdd (ent->client->v_angle, ent->client->kick_angles, angles);
 	AngleVectors (angles, forward, right, NULL);
 	VectorSet(offset, 0, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+
+	if (ent->client->sinner == 0)
+	{
+		damage *= 5;
+		kick *= 2;
+		fire_bullet (ent, start, forward, damage, kick, 1500, 1700, MOD_MACHINEGUN);
+		gi.cprintf(ent, PRINT_HIGH, "%s", "Ghe do be sinning tho");
+	}
+	else if (ent->client->sinner == 5) {
+		//fire_bullet(ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+		fire_bullet(ent, start, forward, damage, 10000, 1, 1, MOD_MACHINEGUN);
+		gi.cprintf(ent, PRINT_HIGH, "%s", "not sinner");
+	}
+	
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -1044,6 +1062,8 @@ void Machinegun_Fire (edict_t *ent)
 		ent->s.frame = FRAME_attack1 - (int) (random()+0.25);
 		ent->client->anim_end = FRAME_attack8;
 	}
+
+	
 }
 
 void Weapon_Machinegun (edict_t *ent)
@@ -1171,6 +1191,8 @@ void Chaingun_Fire (edict_t *ent)
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index] -= shots;
+
+	
 }
 
 
@@ -1218,6 +1240,10 @@ void weapon_shotgun_fire (edict_t *ent)
 		damage *= 4;
 		kick *= 4;
 	}
+
+	ent->health -= 5;
+	damage *= 2;
+	ent->client->DoubleGhost = 1;
 
 	if (deathmatch->value)
 		fire_shotgun (ent, start, forward, damage, kick, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
@@ -1273,10 +1299,11 @@ void weapon_supershotgun_fire (edict_t *ent)
 	v[YAW]   = ent->client->v_angle[YAW] - 5;
 	v[ROLL]  = ent->client->v_angle[ROLL];
 	AngleVectors (v, forward, NULL, NULL);
-	fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+	//jnb27 Adding high kick to push back mobs
+	fire_shotgun (ent, start, forward, 0, 1200, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
 	v[YAW]   = ent->client->v_angle[YAW] + 5;
 	AngleVectors (v, forward, NULL, NULL);
-	fire_shotgun (ent, start, forward, damage, kick, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
+	fire_shotgun (ent, start, forward, 0, 1200, DEFAULT_SHOTGUN_HSPREAD, DEFAULT_SHOTGUN_VSPREAD, DEFAULT_SSHOTGUN_COUNT/2, MOD_SSHOTGUN);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1379,7 +1406,7 @@ void weapon_bfg_fire (edict_t *ent)
 	vec3_t	offset, start;
 	vec3_t	forward, right;
 	int		damage;
-	float	damage_radius = 1000;
+	float	damage_radius = 5000;
 
 	if (deathmatch->value)
 		damage = 200;
