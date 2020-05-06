@@ -26,6 +26,7 @@ void SP_misc_teleporter_dest (edict_t *ent);
 int Thonked = 0;
 edict_t *testGhost;
 
+
 //
 // Gross, ugly, disgustuing hack section
 //
@@ -1728,7 +1729,19 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 
 	// save light level the player is standing on for
 	// monster sighting AI
-	ent->light_level = ucmd->lightlevel;
+	//jnb27 invisibility handling
+	if (client->invis == NULL)
+	{
+		client->invis = 0;
+	}
+	if (client->invis == 1)
+	{
+		ent->light_level = 0;
+	}
+	else{
+		ent->light_level = ucmd->lightlevel;
+	}
+	
 
 	// fire weapon from final position if needed
 	if (client->latched_buttons & BUTTON_ATTACK)
@@ -1772,6 +1785,18 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	if (client->GhostBuff == NULL)
 	{
 		client->GhostBuff = 0;
+	}
+	if (client->DoubleGhost == NULL)
+	{
+		client->DoubleGhost = 0; 
+	}
+	if (client->sinner == NULL)
+	{
+		client->sinner = 0;
+	}
+	if (client->stealyo == NULL)
+	{
+		client->stealyo = 0;
 	}
 }
 
