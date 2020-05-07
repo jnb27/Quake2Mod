@@ -52,6 +52,7 @@ static int	power_shield_index;
 void Use_Quad (edict_t *ent, gitem_t *item);
 static int	quad_drop_timeout_hack;
 
+int healthtype = 0;
 
 
 //======================================================================
@@ -488,6 +489,8 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other)
 	int			count;
 	qboolean	weapon;
 
+	//cleanse(ent);
+
 	weapon = (ent->item->flags & IT_WEAPON);
 	if ( (weapon) && ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		count = 1000;
@@ -509,6 +512,13 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other)
 
 	if (!(ent->spawnflags & (DROPPED_ITEM | DROPPED_PLAYER_ITEM)) && (deathmatch->value))
 		SetRespawn (ent, 30);
+
+	if (other->client->sinner == 0)
+	{
+		other->client->sinner = 10;
+		gi.cprintf(other, PRINT_HIGH, "%s", "c l e a n");
+	}
+
 	return true;
 }
 
@@ -584,8 +594,28 @@ qboolean Pickup_Health (edict_t *ent, edict_t *other)
 			SetRespawn (ent, 30);
 	}
 	//jnb27 testing to see if i can edit what happens to me when i pickup health
+	//Check the counts to determine what buff to give player, 2, 10, 25, 100
+
+	if (ent->count == 2)
+	{// make player invis for a while
+		other->client->invis = 1;
+	}
+	else if (ent->count == 10)
+	{
+		other->client->ps.pmove.gravity = 350;
+		//other->team = 
+	}
+	else if (ent->count == 25)
+	{
+
+	}
+	else if (ent->count == 100)
+	{
+
+	}
+
 	gi.cprintf(other, PRINT_HIGH, "%s", "Pickup_Health fired off");
-	other->client->ps.pmove.gravity = 200;
+	
 	return true;
 }
 
@@ -2133,7 +2163,7 @@ void SP_item_health (edict_t *self)
 		G_FreeEdict (self);
 		return;
 	}
-
+	
 	self->model = "models/items/healing/medium/tris.md2";
 	self->count = 10;
 	SpawnItem (self, FindItem ("Health"));
