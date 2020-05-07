@@ -1734,8 +1734,17 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		client->invis = 0;
 	}
-	if (client->invis == 1)
+	if (client->stealthtime == NULL)
 	{
+		client->stealthtime = 0;
+	}
+	if (client->invis == 1 )
+	{
+		ent->light_level = 0;
+	}
+	else if (client->stealthtime > 0)
+	{
+		client->stealthtime--;
 		ent->light_level = 0;
 	}
 	else{
@@ -1794,9 +1803,43 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	{
 		client->sinner = 0;
 	}
+
 	if (client->stealyo == NULL)
 	{
 		client->stealyo = 0;
+	}
+	else if (client->stealyo > 0)
+	{
+		client->ps.pmove.pm_type = PM_FREEZE;
+		client->stealyo--;
+	}
+	else if (client->stealyo == 0)
+	{
+		client->ps.pmove.pm_type = PM_NORMAL;
+	}
+
+	if (ent->stuntime == NULL)
+	{
+		ent->stuntime = 0;
+	}
+	else if (ent->stuntime > 0)
+	{
+		client->ps.pmove.pm_type = PM_FREEZE;
+		ent->stuntime--;
+	}
+	else if (ent->stuntime == 0)
+	{
+		client->ps.pmove.pm_type = PM_NORMAL;
+		gi.cprintf(ent, PRINT_HIGH, "%s", "stuntime hit zero");
+	}
+	
+	if (client->stunyomans == NULL)
+	{
+		client->stunyomans = 0;
+	}
+	else if (client->stunyomans > 0)
+	{
+		client->stunyomans--;
 	}
 }
 
