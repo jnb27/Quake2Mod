@@ -542,7 +542,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		client->damage_knockback += knockback;
 		VectorCopy (point, client->damage_from);
 		Reflector(attacker, client->damage_armor);
-		Reflector(attacker, client->damage_parmor);
+		//Reflector(attacker, client->damage_parmor);
 	}
 	//
 }
