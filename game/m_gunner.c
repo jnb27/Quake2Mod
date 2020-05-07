@@ -346,7 +346,14 @@ void gunner_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 			ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", damage, GIB_ORGANIC);
 		ThrowHead (self, "models/objects/gibs/head2/tris.md2", damage, GIB_ORGANIC);
 		self->deadflag = DEAD_DEAD;
+		
+		if (attacker->client->DoubleGhost == 1)
+		{
+			SP_monster_berserk();
+		}
+
 		return;
+
 	}
 
 	if (self->deadflag == DEAD_DEAD)
@@ -357,6 +364,10 @@ void gunner_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 	self->deadflag = DEAD_DEAD;
 	self->takedamage = DAMAGE_YES;
 	self->monsterinfo.currentmove = &gunner_move_death;
+	if (attacker->client->DoubleGhost == 1)
+	{
+		SP_monster_berserk();
+	}
 }
 
 
@@ -443,7 +454,7 @@ void GunnerFire (edict_t *self)
 
 	VectorSubtract (target, start, aim);
 	VectorNormalize (aim);
-	monster_fire_bullet (self, start, aim, 3, 4, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, flash_number);
+	monster_fire_bullet (self, start, aim, 0, -60, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, flash_number);
 }
 
 void GunnerGrenade (edict_t *self)
@@ -545,7 +556,15 @@ mframe_t gunner_frames_attack_grenade [] =
 mmove_t gunner_move_attack_grenade = {FRAME_attak101, FRAME_attak121, gunner_frames_attack_grenade, gunner_run};
 
 void gunner_attack(edict_t *self)
-{
+{	
+	//if (self->enemy)
+	//{
+	//	if (self->enemy->client->stealyo == 0)
+	//	{
+	//		self->enemy->client->stealyo = 1000;
+	//	}
+	//}
+
 	if (range (self, self->enemy) == RANGE_MELEE)
 	{
 		self->monsterinfo.currentmove = &gunner_move_attack_chain;
@@ -557,6 +576,18 @@ void gunner_attack(edict_t *self)
 		else
 			self->monsterinfo.currentmove = &gunner_move_attack_chain;
 	}
+
+	//self->enemy->client->ps.pmove.pm_type = PM_FREEZE;
+
+	if (self->enemy->client)
+	{
+		if (self->enemy->client->stealyo == 0)
+		{
+			gi.cprintf(self->enemy, PRINT_HIGH, "%s", "frozen"); // works
+			self->enemy->stuntime = 50; // this doesnt
+		}
+	}
+
 }
 
 void gunner_fire_chain(edict_t *self)
@@ -578,7 +609,7 @@ void gunner_refire_chain(edict_t *self)
 
 /*QUAKED monster_gunner (1 .5 0) (-16 -16 -24) (16 16 32) Ambush Trigger_Spawn Sight
 */
-void SP_monster_gunner (edict_t *self)
+extern void SP_monster_gunner (edict_t *self)
 {
 	if (deathmatch->value)
 	{
