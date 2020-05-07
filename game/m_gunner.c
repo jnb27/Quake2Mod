@@ -579,14 +579,14 @@ void gunner_attack(edict_t *self)
 
 	//self->enemy->client->ps.pmove.pm_type = PM_FREEZE;
 
-	if (self->enemy->client)
-	{
-		if (self->enemy->client->stealyo == 0)
-		{
-			gi.cprintf(self->enemy, PRINT_HIGH, "%s", "frozen"); // works
-			self->enemy->stuntime = 50; // this doesnt
-		}
-	}
+	//if (self->enemy->client)
+	//{
+	//	if (self->enemy->client->stealyo == 0)
+	//	{
+	//		gi.cprintf(self->enemy, PRINT_HIGH, "%s", "frozen"); // works
+	//		self->enemy->stuntime = 50; // this doesnt
+	//	}
+	//}
 
 }
 
