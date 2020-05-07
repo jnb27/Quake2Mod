@@ -967,6 +967,8 @@ struct gclient_s
 	int sinner;
 	int stealyo;
 	int stealthtime;
+	int stunyomans;
+	int weapcheck;
 };
 
 
@@ -1117,6 +1119,9 @@ struct edict_s
 	// common data blocks
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
+
+	//jnb27 making a stuntime for ents
+	int stuntime;
 };
 
 void	SelectSpawnPoint(edict_t *ent, vec3_t origin, vec3_t angles);
