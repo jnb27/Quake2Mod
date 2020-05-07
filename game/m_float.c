@@ -76,6 +76,8 @@ void floater_fire_blaster (edict_t *self)
 	end[2] += self->enemy->viewheight;
 	VectorSubtract (end, start, dir);
 
+	//PlayerNoise(self, start, PNOISE_WEAPON);
+
 	monster_fire_blaster (self, start, dir, 1, 1000, MZ2_FLOAT_BLASTER_1, effect);
 }
 
