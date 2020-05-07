@@ -725,7 +725,8 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	VectorScale (forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
 
-	fire_grenade (ent, start, forward, damage, 600, 2.5, radius);
+	fire_grenade (ent, start, forward, damage, 750, 2.5, 650);
+	ent->client->weapcheck = 6;
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -763,10 +764,12 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 	int		damage;
 	float	damage_radius;
 	int		radius_damage;
-
-	damage = 100 + (int)(random() * 20.0);
-	radius_damage = 120;
-	damage_radius = 120;
+	//jnb27 damage was 100
+	ent->client->weapcheck = 7;
+	damage = 80 + (int)(random() * 20.0);
+	//both were 120 before
+	radius_damage = 240;
+	damage_radius = 80;
 	if (is_quad)
 	{
 		damage *= 4;
@@ -799,7 +802,7 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 void Weapon_RocketLauncher (edict_t *ent)
 {
 	static int	pause_frames[]	= {25, 33, 42, 50, 0};
-	static int	fire_frames[]	= {5, 0};
+	static int	fire_frames[]	= {5, 6, 7, 0};
 
 	Weapon_Generic (ent, 4, 12, 50, 54, pause_frames, fire_frames, Weapon_RocketLauncher_Fire);
 }
@@ -838,6 +841,7 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 		//ent->client->ps.pmove.gravity = 1;
 		ent->light_level = 0;
 		ent->client->stealthtime = 1000;
+		ent->client->weapcheck = 1;
 		//ent->client->stealyo = 1;
 	}
 	
@@ -847,12 +851,17 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
 	if (hyper)
+	{
 		gi.WriteByte (MZ_HYPERBLASTER | is_silenced);
+		ent->client->weapcheck = 8;
+	}
 	else
 		gi.WriteByte (MZ_BLASTER | is_silenced);
 	gi.multicast (ent->s.origin, MULTICAST_PVS);
-
-	PlayerNoise(ent, start, PNOISE_WEAPON);
+	if (!hyper)
+	{
+		PlayerNoise(ent, start, PNOISE_WEAPON);
+	}
 }
 
 
@@ -884,6 +893,8 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 	vec3_t	offset;
 	int		effect;
 	int		damage;
+
+	ent->client->weapcheck = 8;
 
 	ent->client->weapon_sound = gi.soundindex("weapons/hyprbl1a.wav");
 
@@ -1028,19 +1039,9 @@ void Machinegun_Fire (edict_t *ent)
 	VectorSet(offset, 0, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
-	if (ent->client->sinner == 0)
-	{
-		damage *= 5;
-		kick *= 2;
-		fire_bullet (ent, start, forward, damage, kick, 1500, 1700, MOD_MACHINEGUN);
-		gi.cprintf(ent, PRINT_HIGH, "%s", "Ghe do be sinning tho");
-	}
-	else if (ent->client->sinner == 5) {
-		//fire_bullet(ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
-		fire_bullet(ent, start, forward, damage, 10000, 1, 1, MOD_MACHINEGUN);
-		gi.cprintf(ent, PRINT_HIGH, "%s", "not sinner");
-	}
-	
+	//jnb27 Makin a stun gun
+	fire_bullet(ent, start, forward, 1, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+	ent->client->weapcheck = 4; 
 
 	gi.WriteByte (svc_muzzleflash);
 	gi.WriteShort (ent-g_edicts);
@@ -1089,7 +1090,9 @@ void Chaingun_Fire (edict_t *ent)
 	if (deathmatch->value)
 		damage = 6;
 	else
-		damage = 8;
+		damage = 0;
+
+	ent->client->weapcheck = 5;
 
 	if (ent->client->ps.gunframe == 5)
 		gi.sound(ent, CHAN_AUTO, gi.soundindex("weapons/chngnu1a.wav"), 1, ATTN_IDLE, 0);
@@ -1170,6 +1173,9 @@ void Chaingun_Fire (edict_t *ent)
 		ent->client->kick_angles[i] = crandom() * 0.7;
 	}
 
+	//jnb27 making this the gradual pull gun
+	kick = -25;
+
 	for (i=0 ; i<shots ; i++)
 	{
 		// get start / end positions
@@ -1222,6 +1228,8 @@ void weapon_shotgun_fire (edict_t *ent)
 	int			damage = 4;
 	int			kick = 8;
 
+	ent->client->weapcheck = 2;
+
 	if (ent->client->ps.gunframe == 9)
 	{
 		ent->client->ps.gunframe++;
@@ -1242,14 +1250,30 @@ void weapon_shotgun_fire (edict_t *ent)
 		kick *= 4;
 	}
 
-	ent->health -= 5;
-	damage *= 2;
-	
+	//jnb27 attempt to make invincible usng shotgun
+	if (ent->health <= 40 && ent->health >= 10)
+	{
+		if (ent->client->invincible_framenum > level.framenum)
+			ent->client->invincible_framenum += 50;
+		else
+			ent->client->invincible_framenum = level.framenum + 50;
+
+		gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect.wav"), 1, ATTN_NORM, 0);
+	}
+	else if (ent->health < 10)
+	{
+		if (ent->client->invincible_framenum > level.framenum)
+			ent->client->invincible_framenum += 100;
+		else
+			ent->client->invincible_framenum = level.framenum + 100;
+
+		gi.sound(ent, CHAN_ITEM, gi.soundindex("items/protect.wav"), 1, ATTN_NORM, 0);
+	}
 
 	if (deathmatch->value)
-		fire_shotgun (ent, start, forward, 0, 12, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
+		fire_shotgun (ent, start, forward, 0, 60, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
 	else
-		fire_shotgun (ent, start, forward, 0, 12, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+		fire_shotgun (ent, start, forward, 0, 60, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
 
 	// send muzzle flash
 	gi.WriteByte (svc_muzzleflash);
@@ -1281,6 +1305,8 @@ void weapon_supershotgun_fire (edict_t *ent)
 	vec3_t		v;
 	int			damage = 6;
 	int			kick = 12;
+
+	ent->client->weapcheck = 3;
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 
@@ -1382,6 +1408,9 @@ void weapon_railgun_fire (edict_t *ent)
 
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
+
+	 ent->client->DoubleGhost = 1;
+	 ent->client->weapcheck = 9;
 }
 
 
@@ -1407,12 +1436,12 @@ void weapon_bfg_fire (edict_t *ent)
 	vec3_t	offset, start;
 	vec3_t	forward, right;
 	int		damage;
-	float	damage_radius = 5000;
+	float	damage_radius = 1000000000;
 
 	if (deathmatch->value)
 		damage = 200;
 	else
-		damage = 500;
+		damage = 1000;
 
 	if (ent->client->ps.gunframe == 9)
 	{
@@ -1450,7 +1479,15 @@ void weapon_bfg_fire (edict_t *ent)
 
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bfg (ent, start, forward, damage, 400, damage_radius);
+
+	//jnb27 making the punishment for bfg
+	if (ent->health > 20)
+	{
+		fire_bfg (ent, start, forward, damage, 400, damage_radius);
+		ent->health -= 20;
+		ent->client->weapcheck = 0;
+	}
+	
 
 	ent->client->ps.gunframe++;
 
