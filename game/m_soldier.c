@@ -421,7 +421,18 @@ void soldier_pain (edict_t *self, edict_t *other, float kick, int damage)
 		return;
 	}
 
-	self->pain_debounce_time = level.time + 3;
+	self->pain_debounce_time = level.time + 3; //jnb27 trying to do some thinking freezing
+	//if (other->client->stunyomans > 0)
+	//{
+	if (other->client->weapcheck == 4)
+	{
+		self->nextthink = level.time + 3;
+	}
+	//}
+	//else if (other->client->stunyomans <= 0)
+	//{
+		//self->nextthink = level.time;
+	//}
 
 	n = self->s.skinnum | 1;
 	if (n == 1)
@@ -448,6 +459,14 @@ void soldier_pain (edict_t *self, edict_t *other, float kick, int damage)
 		self->monsterinfo.currentmove = &soldier_move_pain2;
 	else
 		self->monsterinfo.currentmove = &soldier_move_pain3;
+	//jnb27 trying to steal enemies
+	//if (other->client->stealyo == 1)
+	//{
+	//	self->teammaster = other->teammaster;
+	//	self->team = other->team;
+	//	self->teamchain = other->teamchain;
+	//	gi.cprintf(other, PRINT_HIGH, "%s", "stole ya");
+	//}
 }
 
 
@@ -521,6 +540,8 @@ void soldier_fire (edict_t *self, int flash_number)
 		else
 			self->monsterinfo.aiflags |= AI_HOLD_FRAME;
 	}
+
+
 }
 
 // ATTACK1 (blaster/shotgun)
@@ -1154,6 +1175,22 @@ void soldier_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 		ThrowGib (self, "models/objects/gibs/chest/tris.md2", damage, GIB_ORGANIC);
 		ThrowHead (self, "models/objects/gibs/head2/tris.md2", damage, GIB_ORGANIC);
 		self->deadflag = DEAD_DEAD;
+
+		if (/*rand() % (upper - lower + 1) + lower > 10 && */attacker->client->GhostBuff <= 4)
+		{
+			SP_monster_infantry();
+			//SP_monster_gunner(); //rebuilding pls
+			gi.cprintf(attacker, PRINT_HIGH, "%s", "Ghost spawned");
+		}
+		else{
+			if (attacker->client->GhostBuff > 0)
+			{
+				attacker->client->GhostBuff--;
+			}
+
+			gi.cprintf(attacker, PRINT_HIGH, "%s", "Ghost buff minus one");
+		}
+
 		return;
 	}
 
@@ -1196,11 +1233,11 @@ void soldier_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 	//TEST SPAWNING GHOST HERE WHEN POSSIBLE
 	//int upper = 100;
 	//int lower = 0;
-	if (/*rand() % (upper - lower + 1) + lower > 10 && */attacker->client->GhostBuff <= 4)
-	{
-		//SP_monster_brain();
-		//attacker->client->ps.pmove.gravity = 350;
-		gi.cprintf(attacker, PRINT_HIGH, "%s", "RNG did not like you");
+	if (/*rand() % (upper - lower + 1) + lower > 33 && */attacker->client->GhostBuff <= 0)
+	{	
+		SP_monster_infantry();
+		//SP_monster_gunner();
+		gi.cprintf(attacker, PRINT_HIGH, "%s", "Ghost spawned");
 	}
 	else{
 		if (attacker->client->GhostBuff > 0)
@@ -1210,7 +1247,6 @@ void soldier_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 		
 		gi.cprintf(attacker, PRINT_HIGH, "%s", "Ghost buff minus one");
 	}
-		SP_monster_berserk();
 }
 
 
