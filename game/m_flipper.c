@@ -50,6 +50,9 @@ mmove_t	flipper_move_stand = {FRAME_flphor01, FRAME_flphor01, flipper_frames_sta
 
 void flipper_stand (edict_t *self)
 {
+	//jnb27 screams of the damned
+	//gi.sound(self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+
 		self->monsterinfo.currentmove = &flipper_move_stand;
 }
 
@@ -104,6 +107,9 @@ mmove_t flipper_move_run_start = {FRAME_flpver01, FRAME_flpver06, flipper_frames
 
 void flipper_run (edict_t *self)
 {
+	//jnb27 screams of the damned
+	//gi.sound(self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+
 	self->monsterinfo.currentmove = &flipper_move_run_start;
 }
 
@@ -139,6 +145,9 @@ mmove_t flipper_move_walk = {FRAME_flphor01, FRAME_flphor24, flipper_frames_walk
 
 void flipper_walk (edict_t *self)
 {
+	//jnb27 screams of the damned
+	//gi.sound(self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+
 	self->monsterinfo.currentmove = &flipper_move_walk;
 }
 
@@ -154,6 +163,9 @@ mmove_t flipper_move_start_run = {FRAME_flphor01, FRAME_flphor05, flipper_frames
 
 void flipper_start_run (edict_t *self)
 {
+	//jnb27 screams of the damned
+	//gi.sound(self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+
 	self->monsterinfo.currentmove = &flipper_move_start_run;
 }
 
@@ -180,6 +192,8 @@ mmove_t flipper_move_pain1 = {FRAME_flppn201, FRAME_flppn205, flipper_frames_pai
 void flipper_bite (edict_t *self)
 {
 	vec3_t	aim;
+	//jnb27 screams of the damned
+	//gi.sound(self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
 
 	VectorSet (aim, MELEE_DISTANCE, 0, 0);
 	fire_hit (self, aim, 5, 0);
@@ -217,6 +231,9 @@ mmove_t flipper_move_attack = {FRAME_flpbit01, FRAME_flpbit20, flipper_frames_at
 
 void flipper_melee(edict_t *self)
 {
+	//jnb27 screams of the damned
+	//gi.sound(self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+
 	self->monsterinfo.currentmove = &flipper_move_attack;
 }
 
@@ -250,6 +267,9 @@ void flipper_pain (edict_t *self, edict_t *other, float kick, int damage)
 
 void flipper_dead (edict_t *self)
 {
+	//jnb27 screams of the damned
+	//gi.sound(self, CHAN_VOICE, sound_pain2, 1, ATTN_NORM, 0);
+
 	VectorSet (self->mins, -16, -16, -24);
 	VectorSet (self->maxs, 16, 16, -8);
 	self->movetype = MOVETYPE_TOSS;
