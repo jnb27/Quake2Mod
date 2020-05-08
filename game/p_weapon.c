@@ -718,6 +718,11 @@ void weapon_grenadelauncher_fire (edict_t *ent)
 	if (is_quad)
 		damage *= 4;
 
+	if (ent->client->stealyo > 0)
+	{
+		damage = damage / 2;
+	}
+
 	VectorSet(offset, 8, 8, ent->viewheight-8);
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
@@ -775,6 +780,10 @@ void Weapon_RocketLauncher_Fire (edict_t *ent)
 		damage *= 4;
 		radius_damage *= 4;
 	}
+	if (ent->client->stealyo > 0)
+	{
+		damage = damage / 2;
+	}
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 
@@ -824,6 +833,12 @@ void Blaster_Fire (edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, in
 
 	if (is_quad)
 		damage *= 4;
+
+	if (ent->client->stealyo > 0)
+	{
+		damage = damage / 2;
+	}
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 	VectorSet(offset, 24, 8, ent->viewheight-8);
 	VectorAdd (offset, g_offset, offset);
@@ -927,7 +942,7 @@ void Weapon_HyperBlaster_Fire (edict_t *ent)
 			if (deathmatch->value)
 				damage = 15;
 			else
-				damage = 20;
+				damage = 10;
 			Blaster_Fire (ent, offset, damage, true, effect);
 			if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 				ent->client->pers.inventory[ent->client->ammo_index]--;
@@ -1012,6 +1027,11 @@ void Machinegun_Fire (edict_t *ent)
 	{
 		damage *= 4;
 		kick *= 4;
+	}
+
+	if (ent->client->stealyo > 0)
+	{
+		damage = damage / 2;
 	}
 
 	//ent->health -= 3;
@@ -1167,6 +1187,11 @@ void Chaingun_Fire (edict_t *ent)
 		kick *= 4;
 	}
 
+	if (ent->client->stealyo > 0)
+	{
+		damage = damage / 2;
+	}
+
 	for (i=0 ; i<3 ; i++)
 	{
 		ent->client->kick_origin[i] = crandom() * 0.35;
@@ -1185,7 +1210,7 @@ void Chaingun_Fire (edict_t *ent)
 		VectorSet(offset, 0, r, u + ent->viewheight-8);
 		P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
-		fire_bullet (ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
+		fire_bullet (ent, start, forward, damage, -40, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
 	}
 
 	// send muzzle flash
@@ -1248,6 +1273,10 @@ void weapon_shotgun_fire (edict_t *ent)
 	{
 		damage *= 4;
 		kick *= 4;
+	}
+	if (ent->client->stealyo > 0)
+	{
+		damage = damage / 2;
 	}
 
 	//jnb27 attempt to make invincible usng shotgun
@@ -1321,6 +1350,10 @@ void weapon_supershotgun_fire (edict_t *ent)
 		damage *= 4;
 		kick *= 4;
 	}
+	if (ent->client->stealyo > 0)
+	{
+		damage = damage / 2;
+	}
 
 	v[PITCH] = ent->client->v_angle[PITCH];
 	v[YAW]   = ent->client->v_angle[YAW] - 5;
@@ -1387,6 +1420,10 @@ void weapon_railgun_fire (edict_t *ent)
 		damage *= 4;
 		kick *= 4;
 	}
+	if (ent->client->stealyo > 0)
+	{
+		damage = damage / 2;
+	}
 
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 
@@ -1409,7 +1446,10 @@ void weapon_railgun_fire (edict_t *ent)
 	if (! ( (int)dmflags->value & DF_INFINITE_AMMO ) )
 		ent->client->pers.inventory[ent->client->ammo_index]--;
 
-	 ent->client->DoubleGhost = 1;
+	if (ent->client->sinner == 0)
+	{
+		 ent->client->DoubleGhost = 1;
+	}
 	 ent->client->weapcheck = 9;
 }
 
@@ -1468,6 +1508,11 @@ void weapon_bfg_fire (edict_t *ent)
 	if (is_quad)
 		damage *= 4;
 
+	if (ent->client->stealyo > 0)
+	{
+		damage = damage / 2;
+	}
+
 	AngleVectors (ent->client->v_angle, forward, right, NULL);
 
 	VectorScale (forward, -2, ent->client->kick_origin);
@@ -1481,12 +1526,16 @@ void weapon_bfg_fire (edict_t *ent)
 	P_ProjectSource (ent->client, ent->s.origin, offset, forward, right, start);
 
 	//jnb27 making the punishment for bfg
-	if (ent->health > 20)
+	if (ent->client->sinner == 0)
 	{
-		fire_bfg (ent, start, forward, damage, 400, damage_radius);
-		ent->health -= 20;
-		ent->client->weapcheck = 0;
+		if (ent->health > 20)
+		{
+			fire_bfg (ent, start, forward, damage, 400, damage_radius);
+			ent->health -= 20;
+			ent->client->weapcheck = 0;
+		}
 	}
+
 	
 
 	ent->client->ps.gunframe++;
