@@ -305,13 +305,13 @@ void HelpComputer (edict_t *ent)
 	char	*sk;
 
 	if (skill->value == 0)
-		sk = "easy";
+		sk = "noob";
 	else if (skill->value == 1)
-		sk = "medium";
+		sk = "casual";
 	else if (skill->value == 2)
-		sk = "hard";
+		sk = "tryhard";
 	else
-		sk = "hard+";
+		sk = "epic gamer B)";
 
 	// send the layout
 	Com_sprintf (string, sizeof(string),
@@ -320,13 +320,13 @@ void HelpComputer (edict_t *ent)
 		"xv 0 yv 24 cstring2 \"%s\" "		// level name
 		"xv 0 yv 54 cstring2 \"%s\" "		// help 1
 		"xv 0 yv 110 cstring2 \"%s\" "		// help 2
-		"xv 50 yv 164 string2 \" kills     goals    secrets\" "
+		"xv 50 yv 164 string2 \" ghosts     goals    ???\" "
 		"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ", 
 		sk,
 		level.level_name,
 		game.helpmessage1,
 		game.helpmessage2,
-		level.killed_monsters, level.total_monsters, 
+		level.killed_monsters, ent->client->souls, 
 		level.found_goals, level.total_goals,
 		level.found_secrets, level.total_secrets);
 
