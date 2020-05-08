@@ -152,6 +152,9 @@ void mutant_stand (edict_t *self)
 
 void mutant_idle_loop (edict_t *self)
 {
+	//jnb27 screaming bro
+	gi.sound(self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
+
 	if (random() < 0.75)
 		self->monsterinfo.nextframe = FRAME_stand155;
 }
@@ -177,7 +180,8 @@ mmove_t mutant_move_idle = {FRAME_stand152, FRAME_stand164, mutant_frames_idle, 
 void mutant_idle (edict_t *self)
 {
 	self->monsterinfo.currentmove = &mutant_move_idle;
-	gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
+	//gi.sound (self, CHAN_VOICE, sound_idle, 1, ATTN_IDLE, 0);
+	gi.sound(self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
 }
 
 
@@ -206,6 +210,9 @@ mmove_t mutant_move_walk = {FRAME_walk05, FRAME_walk16, mutant_frames_walk, NULL
 
 void mutant_walk_loop (edict_t *self)
 {
+	//jnb27 screaming bro
+	gi.sound(self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
+
 	self->monsterinfo.currentmove = &mutant_move_walk;
 }
 
@@ -220,6 +227,9 @@ mmove_t mutant_move_start_walk = {FRAME_walk01, FRAME_walk04, mutant_frames_star
 
 void mutant_walk (edict_t *self)
 {
+	//jnb27 screaming bro
+	gi.sound(self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
+
 	self->monsterinfo.currentmove = &mutant_move_start_walk;
 }
 
@@ -241,6 +251,9 @@ mmove_t mutant_move_run = {FRAME_run03, FRAME_run08, mutant_frames_run, NULL};
 
 void mutant_run (edict_t *self)
 {
+	//jnb27 screaming bro
+	gi.sound(self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
+
 	if (self->monsterinfo.aiflags & AI_STAND_GROUND)
 		self->monsterinfo.currentmove = &mutant_move_stand;
 	else
@@ -255,9 +268,10 @@ void mutant_run (edict_t *self)
 void mutant_hit_left (edict_t *self)
 {
 	vec3_t	aim;
+	//jnb27 screaming bro
 
 	VectorSet (aim, MELEE_DISTANCE, self->mins[0], 8);
-	if (fire_hit (self, aim, (10 + (rand() %5)), 100))
+	if (fire_hit (self, aim, 0, 100))
 		gi.sound (self, CHAN_WEAPON, sound_hit, 1, ATTN_NORM, 0);
 	else
 		gi.sound (self, CHAN_WEAPON, sound_swing, 1, ATTN_NORM, 0);
@@ -268,7 +282,7 @@ void mutant_hit_right (edict_t *self)
 	vec3_t	aim;
 
 	VectorSet (aim, MELEE_DISTANCE, self->maxs[0], 8);
-	if (fire_hit (self, aim, (10 + (rand() %5)), 100))
+	if (fire_hit (self, aim, 0, 100))
 		gi.sound (self, CHAN_WEAPON, sound_hit2, 1, ATTN_NORM, 0);
 	else
 		gi.sound (self, CHAN_WEAPON, sound_swing, 1, ATTN_NORM, 0);
@@ -297,6 +311,9 @@ mmove_t mutant_move_attack = {FRAME_attack09, FRAME_attack15, mutant_frames_atta
 
 void mutant_melee (edict_t *self)
 {
+	//jnb27 screaming bro
+	gi.sound(self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
+
 	self->monsterinfo.currentmove = &mutant_move_attack;
 }
 
@@ -307,6 +324,9 @@ void mutant_melee (edict_t *self)
 
 void mutant_jump_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf)
 {
+	//jnb27 screaming bro
+	gi.sound(self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
+
 	if (self->health <= 0)
 	{
 		self->touch = NULL;
@@ -324,7 +344,7 @@ void mutant_jump_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface
 			VectorCopy (self->velocity, normal);
 			VectorNormalize(normal);
 			VectorMA (self->s.origin, self->maxs[0], normal, point);
-			damage = 40 + 10 * random();
+			damage = 0;
 			T_Damage (other, self, self, self->velocity, point, normal, damage, damage, 0, MOD_UNKNOWN);
 		}
 	}
@@ -388,6 +408,9 @@ mmove_t mutant_move_jump = {FRAME_attack01, FRAME_attack08, mutant_frames_jump, 
 
 void mutant_jump (edict_t *self)
 {
+	//jnb27 screaming bro
+	gi.sound(self, CHAN_VOICE, sound_death, 1, ATTN_NORM, 0);
+
 	self->monsterinfo.currentmove = &mutant_move_jump;
 }
 
@@ -584,6 +607,15 @@ void mutant_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 			ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", damage, GIB_ORGANIC);
 		ThrowHead (self, "models/objects/gibs/head2/tris.md2", damage, GIB_ORGANIC);
 		self->deadflag = DEAD_DEAD;
+		
+		if (attacker->client->GhostBuff <= 0)
+		{
+			SP_monster_parasite();
+			//SP_monster_gunner(); //rebuilding pls
+			gi.cprintf(attacker, PRINT_HIGH, "%s", "parasite spawned");
+		}
+
+
 		return;
 	}
 
@@ -599,6 +631,13 @@ void mutant_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int damag
 		self->monsterinfo.currentmove = &mutant_move_death1;
 	else
 		self->monsterinfo.currentmove = &mutant_move_death2;
+
+	if (attacker->client->GhostBuff <= 0)
+	{
+		SP_monster_parasite();
+		//SP_monster_gunner(); //rebuilding pls
+		gi.cprintf(attacker, PRINT_HIGH, "%s", "parasite spawned");
+	}
 }
 
 
