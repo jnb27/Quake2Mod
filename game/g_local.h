@@ -960,14 +960,13 @@ struct gclient_s
 	edict_t		*chase_target;		// player we are chasing
 	qboolean	update_chase;		// need to update chase info?
 
-	edict_t *Ghost;
+	int souls;
 	int GhostBuff;
 	int invis;
 	int DoubleGhost;
 	int sinner;
 	int stealyo;
 	int stealthtime;
-	int stunyomans;
 	int weapcheck;
 };
 
@@ -1121,7 +1120,6 @@ struct edict_s
 	monsterinfo_t	monsterinfo;
 
 	//jnb27 making a stuntime for ents
-	int stuntime;
 };
 
 void	SelectSpawnPoint(edict_t *ent, vec3_t origin, vec3_t angles);
