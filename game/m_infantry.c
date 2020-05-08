@@ -223,6 +223,11 @@ void infantry_pain (edict_t *self, edict_t *other, float kick, int damage)
 		return;
 
 	self->pain_debounce_time = level.time + 3;
+
+	if (other->client->weapcheck == 4)
+	{
+		self->nextthink = level.time + 3;
+	}
 	
 	if (skill->value == 3)
 		return;		// no pain anims in nightmare
@@ -397,6 +402,13 @@ void infantry_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dam
 			ThrowGib (self, "models/objects/gibs/sm_meat/tris.md2", damage, GIB_ORGANIC);
 		ThrowHead (self, "models/objects/gibs/head2/tris.md2", damage, GIB_ORGANIC);
 		self->deadflag = DEAD_DEAD;
+		if (attacker->client->GhostBuff <= 0 )
+		{
+			SP_monster_gunner();
+			//SP_monster_gunner(); //rebuilding pls
+			gi.cprintf(attacker, PRINT_HIGH, "%s", "gunner spawned");
+		}
+
 		return;
 	}
 
@@ -422,6 +434,12 @@ void infantry_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dam
 	{
 		self->monsterinfo.currentmove = &infantry_move_death3;
 		gi.sound (self, CHAN_VOICE, sound_die2, 1, ATTN_NORM, 0);
+	}
+	if (attacker->client->GhostBuff <= 0 )
+	{
+		SP_monster_gunner();
+		//SP_monster_gunner(); //rebuilding pls
+		gi.cprintf(attacker, PRINT_HIGH, "%s", "gunner spawned");
 	}
 }
 
