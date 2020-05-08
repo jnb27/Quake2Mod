@@ -1176,19 +1176,19 @@ void soldier_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 		ThrowHead (self, "models/objects/gibs/head2/tris.md2", damage, GIB_ORGANIC);
 		self->deadflag = DEAD_DEAD;
 
-		if (/*rand() % (upper - lower + 1) + lower > 10 && */attacker->client->GhostBuff <= 4)
+		int upper = 100;
+		int lower = 0;
+		if (attacker->client->GhostBuff <= 0 )
 		{
-			SP_monster_infantry();
+			SP_monster_mutant();
 			//SP_monster_gunner(); //rebuilding pls
-			gi.cprintf(attacker, PRINT_HIGH, "%s", "Ghost spawned");
+			gi.cprintf(attacker, PRINT_HIGH, "%s", "Mutant spawned");
 		}
-		else{
-			if (attacker->client->GhostBuff > 0)
-			{
-				attacker->client->GhostBuff--;
-			}
 
+		if (attacker->client->GhostBuff > 0)
+		{
 			gi.cprintf(attacker, PRINT_HIGH, "%s", "Ghost buff minus one");
+			attacker->client->GhostBuff--;
 		}
 
 		return;
@@ -1231,22 +1231,36 @@ void soldier_die (edict_t *self, edict_t *inflictor, edict_t *attacker, int dama
 	//jnb27 testing to see if this is the called function on the death
 	//Attacker is me and i do lose health properly, now we know that this is called for the soldiers
 	//TEST SPAWNING GHOST HERE WHEN POSSIBLE
-	//int upper = 100;
-	//int lower = 0;
-	if (/*rand() % (upper - lower + 1) + lower > 33 && */attacker->client->GhostBuff <= 0)
-	{	
-		SP_monster_infantry();
-		//SP_monster_gunner();
-		gi.cprintf(attacker, PRINT_HIGH, "%s", "Ghost spawned");
+	int upper = 100;
+	int lower = 0;
+	//if (rand() % (upper - lower + 1) + lower <= 33 && attacker->client->GhostBuff <= 0)
+	//{
+	//	SP_monster_parasite();
+	//	//SP_monster_gunner(); //rebuilding pls
+	//	gi.cprintf(attacker, PRINT_HIGH, "%s", "Parasite spawned");
+	//}
+	//else if (rand() % (upper - lower + 1) + lower < 66 && rand() % (upper - lower + 1) + lower >= 34 && attacker->client->GhostBuff <= 0)
+	//{
+	//	SP_monster_gunner();
+	//	//SP_monster_gunner(); //rebuilding pls
+	//	gi.cprintf(attacker, PRINT_HIGH, "%s", "Gunner spawned");
+	//}
+	/*else if (rand() % (upper - lower + 1) + lower >= 66 && */
+	if (attacker->client->GhostBuff <= 0 && (level.killed_monsters % 3 == 0))
+	{
+		SP_monster_mutant();
+		//SP_monster_gunner(); //rebuilding pls
+		gi.cprintf(attacker, PRINT_HIGH, "%s", "Mutant spawned");
 	}
-	else{
+
 		if (attacker->client->GhostBuff > 0)
 		{
+			gi.cprintf(attacker, PRINT_HIGH, "%s", "Ghost buff minus one");
 			attacker->client->GhostBuff--;
 		}
+
 		
-		gi.cprintf(attacker, PRINT_HIGH, "%s", "Ghost buff minus one");
-	}
+	
 }
 
 
