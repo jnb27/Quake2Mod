@@ -516,6 +516,7 @@ qboolean Pickup_Ammo (edict_t *ent, edict_t *other)
 	if (other->client->sinner == 0)
 	{
 		other->client->sinner = 10;
+		other->client->DoubleGhost = 0;
 		gi.cprintf(other, PRINT_HIGH, "%s", "c l e a n");
 	}
 
