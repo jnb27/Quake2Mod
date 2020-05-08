@@ -1810,37 +1810,15 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	}
 	else if (client->stealyo > 0)
 	{
-		client->ps.pmove.pm_type = PM_FREEZE;
+		//damage debuff
 		client->stealyo--;
 	}
-	else if (client->stealyo == 0)
-	{
-		client->ps.pmove.pm_type = PM_NORMAL;
-	}
-
-	if (ent->stuntime == NULL)
-	{
-		ent->stuntime = 0;
-	}
-	else if (ent->stuntime > 0)
-	{
-		client->ps.pmove.pm_type = PM_FREEZE;
-		ent->stuntime--;
-	}
-	else if (ent->stuntime == 0)
-	{
-		client->ps.pmove.pm_type = PM_NORMAL;
-		gi.cprintf(ent, PRINT_HIGH, "%s", "stuntime hit zero");
-	}
 	
-	if (client->stunyomans == NULL)
+	if (client->souls == NULL)
 	{
-		client->stunyomans = 0;
+		client->souls = 0;
 	}
-	else if (client->stunyomans > 0)
-	{
-		client->stunyomans--;
-	}
+	client->souls = level.killed_monsters * 2;
 }
 
 
